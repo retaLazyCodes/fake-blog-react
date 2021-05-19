@@ -27,12 +27,6 @@ export const Home = () => {
       })
   }, [])
 
-  // useEffect(() => {
-  //   if (localStorage.getItem('posts')) {
-  //     setPosts([...posts], JSON.parse(localStorage.getItem('posts')));
-  //   }
-  // }, [posts]);
-
   return (
     <div>
       <h1>Posts</h1>
