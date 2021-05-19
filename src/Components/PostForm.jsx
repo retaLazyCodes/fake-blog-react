@@ -1,79 +1,89 @@
-import React, { useEffect, useState } from 'react'
+import { useForm } from "react-hook-form";
+import { Alert } from './Alert'
 import { createPost } from './services/posts/createPost'
-import { Link, Route } from "react-router-dom";
-import { Home } from './Home'
 
 export const PostForm = () => {
-    const [posts, setPosts] = useState([])
-    const [newPostBody, setNewPostBody] = useState('')
-    const [newPostTitle, setNewPostTitle] = useState('')
-    const [error, setError] = useState('')
+    const { register, handleSubmit, formState: { errors } } = useForm();
 
-    const handlePostBodyChange = (event) => {
-        setNewPostBody(event.target.value)
-    }
-
-    const handlePostTitleChange = (event) => {
-        setNewPostTitle(event.target.value)
-    }
-
-    useEffect(() => {
-        console.log(posts)
-    }, [posts])
-
-    const handleSubmit = (event) => {
-        event.preventDefault()
-
-        const postToAdd = {
-            title: newPostTitle,
-            body: newPostBody,
-            userId: 1
-        }
-
-        console.log({ postToAdd })
-
-        createPost(postToAdd).then(post => {
-            setPosts([...posts, post])
+    const onSubmit = (data, e) => {
+        data.userId = 1
+        createPost(data).then(post => {
+            console.log(post)
+            savePost(post)
         })
             .catch(e => {
                 console.log(e)
-                setError('Error en el servidor. No se han podido enviar los datos')
             })
 
-        setNewPostTitle('')
-        setNewPostBody('')
+        e.target.reset()
     }
 
-    < Route
-        path="/"
-        exact
-        render={(posts) => (
-            <Home newPosts={posts} />
-        )} />
-
+    const savePost = (data) => {
+        if (!localStorage.getItem('posts')) {
+            localStorage.setItem('posts', JSON.stringify([data]));
+        } else {
+            const posts = JSON.parse(localStorage.getItem('posts'));
+            console.log({ posts })
+            const lastId = posts[posts.length - 1].id
+            data.id = lastId + 1
+            posts.push(data);
+            localStorage.setItem('posts', JSON.stringify(posts));
+        }
+    }
 
     return (
-        <div className="container">
-            <form className="w-90 mt-5" onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="exampleFormControlInput1" style={{ fontSize: "1.5rem" }}>Title</label>
-                    <input value={newPostTitle} onChange={handlePostTitleChange} type="text" className="form-control" id="exampleFormControlInput1" placeholder="I'm a Alkymer!!" />
-                </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="container w-50 mt-3">
 
-                <div className="form-group">
-                    <label htmlFor="exampleFormControlTextarea1" style={{ fontSize: "1.5rem" }}>Post content</label>
-                    <textarea value={newPostBody} onChange={handlePostBodyChange} className="form-control" id="exampleFormControlTextarea1" rows="6"></textarea>
+            <div className="mb-5">
+                <label className="form-label" style={{ fontSize: "1.5rem" }}>
+                    Title
+                </label>
+                <input
+                    className="form-control my-3"
+                    placeholder="I'm a Alkymer!!"
+                    {...register("title", {
+                        required: {
+                            value: true,
+                            message: "The title is required"
+                        },
+                        minLength: {
+                            value: 5,
+                            message: "The title must be longer than 5 characters"
+                        }
+                    })}
+                />
+                {errors?.title?.message ? <Alert msg={errors.title.message} type="danger" /> : null}
+
+            </div>
+
+            <label className="form-label" style={{ fontSize: "1.5rem" }}>
+                Post content
+            </label>
+            <textarea
+                className="form-control my-3"
+                rows="6"
+                {...register("body", {
+                    required: {
+                        value: true,
+                        message: "The post content is required"
+                    },
+                    minLength: {
+                        value: 10,
+                        message: "The post content must be longer than 10 characters"
+                    }
+                })}
+            >
+
+            </textarea>
+            { errors?.body?.message ? <Alert msg={errors.body.message} type="danger" /> : null}
+
+            <div className="row">
+                <div className="col text-center">
+                    <button className="btn btn-lg btn-outline-primary mr-3">
+                        Add Post
+                    </button>
                 </div>
-                <div className="row">
-                    <div className="col text-center">
-                        <button className="btn btn-lg btn-outline-primary mr-3">
-                            Add Post
-                        </button>
-                        <Link to="/" className="btn btn-lg btn-outline-success ml-3">Go back</Link>
-                    </div>
-                </div>
-            </form>
-            {error ? < span className="error" style={{ color: "red" }}>{error}</span> : ''}
-        </div>
+            </div>
+        </form>
     )
 }

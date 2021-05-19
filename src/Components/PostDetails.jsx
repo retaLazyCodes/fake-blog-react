@@ -5,17 +5,29 @@ import { getAllPosts } from './services/posts/getAllPosts'
 
 
 export const PostDetails = () => {
-    const [post, setPosts] = useState({})
+    const [post, setPost] = useState({})
     const { id } = useParams()
 
     useEffect(() => {
-        getAllPosts(id).then(post => {
-            setPosts(post)
-        })
-            .catch(e => {
-                console.log(e)
+        if (id <= 100) {
+            getAllPosts(id).then(post => {
+                setPost(post)
             })
+                .catch(e => {
+                    console.log(e)
+                })
+        }
+        else {
+            getStoredPost(id)
+        }
     }, [id])
+
+    const getStoredPost = (id) => {
+        id = parseInt(id)
+        const storedPosts = JSON.parse(localStorage.getItem('posts'))
+        const filteredPost = storedPosts.filter(post => post.id === id)
+        setPost([...filteredPost][0])
+    }
 
     return (
         <div className="container mt-5">
