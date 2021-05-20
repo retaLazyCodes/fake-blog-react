@@ -23,14 +23,14 @@ export const Home = () => {
     })
       .catch(e => {
         console.log(e)
-        setError('Error en el servidor. No se han podido obtener los datos')
+        setError('Server error. Data could not be obtained')
       })
   }, [])
 
   return (
     <div>
       <h1>Posts</h1>
-      { loading ? <h2>Cargando...</h2> : ''}
+      { loading ? <h2>Loading...</h2> : ''}
       <ul>
         {posts.map(post =>
           <Post key={post.id} post={post} />

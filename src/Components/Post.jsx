@@ -38,7 +38,7 @@ export const Post = ({ post }) => {
                                 Go to the post
                             </Link>
                             <Link to="/" onClick={handleOnClick} className="btn btn-danger ml-1">Delete post</Link>
-                            <Link to="/" className="btn btn-warning ml-1">Edit post</Link>
+                            <Link to={`${ROUTES.editPost}/${post.id}`} className="btn btn-warning ml-1">Edit post</Link>
                         </div>
 
                     </div>
