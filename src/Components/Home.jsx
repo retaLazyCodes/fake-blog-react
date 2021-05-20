@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { Post } from './Post'
+import { PostList } from './PostList'
+import { Pagination } from './Pagination'
 import { getAllPosts } from './services/posts/getAllPosts'
 import './css/home.css'
 
 
 export const Home = () => {
   const [posts, setPosts] = useState([])
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage] = useState(5);
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -27,16 +30,25 @@ export const Home = () => {
       })
   }, [])
 
+  // Get current posts
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+
+  // Change page
+  const paginate = pageNumber => setCurrentPage(pageNumber);
+
   return (
-    <div>
-      <h1>Posts</h1>
-      { loading ? <h2>Loading...</h2> : ''}
-      <ul>
-        {posts.map(post =>
-          <Post key={post.id} post={post} />
-        )}
-      </ul>
-      {error ? < span className="error">{error}</span> : ''}
-    </div >
+    <>
+      <PostList
+        posts={posts}
+        currentPosts={currentPosts}
+        loading={loading}
+        error={error} />
+      <Pagination
+        postsPerPage={postsPerPage}
+        totalPosts={posts.length}
+        paginate={paginate} />
+    </>
   )
 }
