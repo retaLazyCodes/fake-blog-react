@@ -36,10 +36,10 @@ export const Home = () => {
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
   // Change page
-  const paginate = pageNumber => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <>
+    <div>
       <PostList
         posts={posts}
         currentPosts={currentPosts}
@@ -49,6 +49,6 @@ export const Home = () => {
         postsPerPage={postsPerPage}
         totalPosts={posts.length}
         paginate={paginate} />
-    </>
+    </div>
   )
 }

@@ -9,7 +9,7 @@ export const Post = ({ post }) => {
         console.log("clicked Delete")
         const target = event.target.parentNode.parentNode.parentNode.parentNode.parentNode
         deletePost(id).then(post => {
-            target.remove()
+            target.style.display = "none"
             if (id > 100) {
                 deleteStoredPost(id)
             }
