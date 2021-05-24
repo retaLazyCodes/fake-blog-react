@@ -3,7 +3,7 @@ import { PostDetails } from './PostDetails';
 import { useForm } from "react-hook-form";
 import { Alert } from './Alert'
 import { updatePost } from './services/posts/updatePost'
-
+import Swal from 'sweetalert2'
 
 export const PostUpdate = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -11,20 +11,36 @@ export const PostUpdate = () => {
 
     const onSubmit = (data, e) => {
         data.userId = 1
-        if (id <= 100) {
-            updatePost(id).then(post => {
-                console.log(post)
-            })
-                .catch(e => {
-                    console.log(e)
-                })
 
-            e.target.reset()
-        }
-        else {
-            data.id = parseInt(id)
-            updateStoredPost(data)
-        }
+        Swal.fire({
+            title: 'Do you want to save the changes?',
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: `Save`,
+            denyButtonText: `Don't save`,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire('Saved!', '', 'success')
+
+                if (id <= 100) {
+                    updatePost(id).then(post => {
+                        console.log(post)
+                    })
+                        .catch(e => {
+                            console.log(e)
+                        })
+
+                    e.target.reset()
+                }
+                else {
+                    data.id = parseInt(id)
+                    updateStoredPost(data)
+                }
+            } else if (result.isDenied) {
+                Swal.fire('Changes are not saved', '', 'info')
+            }
+        })
+
     }
 
     const updateStoredPost = (data) => {

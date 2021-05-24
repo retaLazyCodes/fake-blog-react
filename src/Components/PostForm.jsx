@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Alert } from './Alert'
 import { createPost } from './services/posts/createPost'
+import Swal from 'sweetalert2'
 
 export const PostForm = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -10,9 +11,20 @@ export const PostForm = () => {
         createPost(data).then(post => {
             console.log(post)
             savePost(post)
+            Swal.fire({
+                icon: 'success',
+                title: 'Your work has been saved',
+                showConfirmButton: false,
+                timer: 1500
+            })
         })
             .catch(e => {
                 console.log(e)
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong!',
+                })
             })
 
         e.target.reset()

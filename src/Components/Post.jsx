@@ -1,22 +1,43 @@
 import { Link } from "react-router-dom";
 import { ROUTES } from './services/routes/myRoutes'
 import { deletePost } from './services/posts/deletePost'
+import Swal from 'sweetalert2'
 
 export const Post = ({ post }) => {
     const { id } = post
 
     const handleOnClick = (event) => {
         console.log("clicked Delete")
-        const target = event.target.parentNode.parentNode.parentNode.parentNode.parentNode
-        deletePost(id).then(post => {
-            target.style.display = "none"
-            if (id > 100) {
-                deleteStoredPost(id)
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const target = event.target.parentNode.parentNode.parentNode.parentNode.parentNode
+                deletePost(id).then(post => {
+                    target.style.display = "none"
+                    if (id > 100) {
+                        deleteStoredPost(id)
+                    }
+                })
+                    .catch(e => {
+                        console.log(e)
+                    })
+
+                Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                )
             }
         })
-            .catch(e => {
-                console.log(e)
-            })
+
     }
 
     const deleteStoredPost = (id) => {
