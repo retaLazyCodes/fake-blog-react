@@ -1,3 +1,8 @@
+**# Screenshot:**
+
+![fake-blog](./capture.png)
+
+
 **# How To Run:**
 
 1. Install Node.js
